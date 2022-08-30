@@ -2,7 +2,7 @@ var http = require("http");
 var fs = require("fs");
 var url = require("url"); //url이라는 모듈의 사용
 var qs =require("querystring");//querystring이라는 모듈의 사용
-function templateHTML(title, list, body) {
+function templateHTML(title, list, body, control) {
   return `
     <!doctype html>
     <html>
@@ -13,7 +13,7 @@ function templateHTML(title, list, body) {
     <body>
         <h1><a href="/">WEB</a></h1>
         ${list}
-        <a href="/create">create</a>
+        ${control}
         ${body}
     </body>
     </html>
@@ -45,7 +45,8 @@ var app = http.createServer(function (request, response) {
         var template = templateHTML(
           title,
           list,
-          `<h2>${title}</h2>${description}`
+          `<h2>${title}</h2>${description}`,
+          `<a href="/create">create</a>`
         );
         response.writeHead(200);
         response.end(template);
@@ -61,7 +62,9 @@ var app = http.createServer(function (request, response) {
             var template = templateHTML(
               title,
               list,
-              `<h2>${title}</h2>${description}`
+              `<h2>${title}</h2>${description}`,
+              `<a href="/create">create</a>
+               <a href="/update?id=${title}">update</a>`
             );
             response.writeHead(200);
             response.end(template);
