@@ -2,7 +2,8 @@ var http = require("http");
 var fs = require("fs");
 var url = require("url"); //url이라는 모듈의 사용
 var qs =require("querystring");//querystring이라는 모듈의 사용
-var template =require("./lib/template.js")
+var template =require("./lib/template.js");
+var path =require("path");
 
 
 
@@ -28,7 +29,8 @@ var app = http.createServer(function (request, response) {
       });
     } else {
       fs.readdir("./data", function (error, fileList) {
-        fs.readFile(`data/${queryData.id}`,"utf8",function (err, description) {
+        var filteredId =path.parse(queryData.id).base;
+        fs.readFile(`data/${filteredId}`,"utf8",function (err, description) {
             var title = queryData.id;
             var list = template.list(fileList);
             var html = template.html(title,list,
@@ -49,6 +51,7 @@ var app = http.createServer(function (request, response) {
     }
   } else if (pathname === "/create") {
     fs.readdir("./data", function (error, fileList) {
+
       var title = "WEB-create";
       var list = template.list(fileList);
       var html = template.html(
@@ -83,7 +86,8 @@ var app = http.createServer(function (request, response) {
     });
   } else if (pathname === "/update") {
     fs.readdir('./data',function(error,fileList){
-        fs.readFile(`data/${queryData.id}`,`utf8`,function(err,description){
+      var filteredId =path.parse(queryData.id).base;
+        fs.readFile(`data/${filteredId}`,`utf8`,function(err,description){
             var title = queryData.id;
             var list = template.list(fileList);
             var html = template.html(
@@ -132,7 +136,8 @@ var app = http.createServer(function (request, response) {
       request.on("end",function(data){
         var post =qs.parse(body);
         var id =post.id;
-        fs.unlink(`data/${id}`, function(error){
+        var filteredId =path.parse(id).base;
+        fs.unlink(`data/${filteredId}`, function(error){
           response.writeHead(302,{Location:`/`});
           response.end();
         })
